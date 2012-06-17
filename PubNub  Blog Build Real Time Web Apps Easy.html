@@ -3,7 +3,7 @@
 <head>
 	<link href="tutorial-how-to-build-real-time-keystroke-chat_files/style.css" rel="stylesheet">
 	<style>
-	#user-list,  #input,#username {
+	#info-list,  #input,#username {
 		padding: 10px;
 		margin: 10px;
 		width: 500px;
@@ -34,8 +34,7 @@
 			repeat-x; */
 	}
 	
-	#user-list {
-		width: 90%;
+	#info-list {
 		height: 100px;
 		overflow: scroll;
 		overflow-x: hidden;
@@ -69,8 +68,8 @@
 	</p>
 	
 	<div class="content">
-		<div style="margin: 0 10px 10px 10px; text-align: left;">
-			<a href="#" id="chat-nickame-change">Change Nickname</a>
+		<div>
+			<a href="#" id="nickame-change" style="margin: 0 10px 10px 13px; text-align: left; display: none">Change Nickname</a>
 		</div>
 		<div>
 			<input id="username" placeholder="enter your name" x-webkit-speech="">
@@ -80,8 +79,8 @@
 		</div>
 		<div id="box"></div>
 	<div id="pubnub" pub-key="demo" sub-key="demo" style="position: absolute; top: -1000px;"></div>
-		<h3 style="margin:10px; text-align: center">System Notifications</h3>
-		<div id="user-list"></div>
+		<h3 style="margin:10px; text-align: left">System Notifications</h3>
+		<div id="info-list"></div>
 	</div>
 	
 	<script src="tutorial-how-to-build-real-time-keystroke-chat_files/pubnub-3.js"></script>

@@ -1,13 +1,13 @@
 (function() {
 	var users = new Array();
 	var my_name = "Anonymous";
-	var msgbox = PUBNUB.$('box'), input = PUBNUB.$('input'), channel = 'chat', username = PUBNUB.$('username'), list = PUBNUB.$('user-list'), username_change = PUBNUB.$('chat-username-change'),
+	var msgbox = PUBNUB.$('box'), input = PUBNUB.$('input'), channel = 'chat', username = PUBNUB.$('username'), list = PUBNUB.$('info-list'), name_change = PUBNUB.$('nickame-change'),
 			bubbles = {}, publishes = 1, br_rx = /[\r\n<>]/g, max_name = 16, max_msg = 100,
 			uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 			    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 			    return v.toString(16);
 			}), color = uuid.slice(-3);
-	var message_bubble_tpl = '<div style="width:460px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 14px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:10px 0px 10px 0px;padding:10px 20px 10px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div>'
+	var message_bubble_tpl = '<div style="width:460px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:10px 0px 10px 0px;padding:10px 20px 10px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div>'
 	username.focus();
 	
 	//username input
@@ -17,8 +17,6 @@
 			if (new_name.length == 0) {
 				return false;
 			}
-			my_name = new_name;
-			$('#username').parent().slideUp();
 			PUBNUB.publish({
 				'channel' : channel,
 				'message' : {
@@ -30,6 +28,25 @@
 		}
 		//send_keystroke();
 		return true;
+	});
+	
+	//username input
+	PUBNUB.bind('mousedown,touchstart', name_change, function() {
+		if (name_change.innerHTML == 'Change Nickname') {
+			$('#username').parent().slideDown();	
+			username.focus();
+			name_change.innerHTML = 'Hide Name Input'
+		} else {
+			$('#username').parent().slideUp();	
+			input.focus();
+			name_change.innerHTML = 'Change Nickname'
+		}
+		
+				//username = prompt('Username:').substr(0, 10);
+				//send_keystroke();
+
+				// Save Username if Possible
+				//db && db.set('username', username);
 	});
 	
 	//message input
@@ -62,10 +79,13 @@
 				var name = message['content'];
 				if (users.indexOf(name) < 0) {	//new user
 					users.push(name);
-					list.innerHTML = 'Welcome ' + name + '</br>' + list.innerHTML;
+					list.innerHTML = 'Welcome: ' + name + '</br>' + list.innerHTML;
+					my_name = name;
+					username.value = '';
+					input.focus();
+					$('#username').parent().slideUp();
+					name_change.style.display='block';
 				}
-				username.value = '';
-				input.focus();
 			} else {	//chat message
 				//var bubble = new_bubble(message['content']);
 				//box.innerHTML = '<div>'+message['user'] + ": " + message['content'] + '</div>' + box.innerHTML;
@@ -90,9 +110,10 @@
 		return bubble;
 	}
 	
-	function gen_uuid() {
-		
-
-	}
-
+//	$('#nickame-change').click(function () {
+//		alert('click');
+//	    if ($('#username').parent().is(":hidden")) {
+//	    	$('#username').parent().show("slow");
+//	});
+	
 })();
