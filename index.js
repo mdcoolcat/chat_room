@@ -1,13 +1,13 @@
 (function() {
-	var users = new Array();
+	//var users = new Array();
 	var my_name = "Anonymous";
 	var msgbox = PUBNUB.$('box'), input = PUBNUB.$('input'), channel = 'chat', username = PUBNUB.$('username'), list = PUBNUB.$('info-list'), name_change = PUBNUB.$('nickame-change'),
-			bubbles = {}, publishes = 1, br_rx = /[\r\n<>]/g, max_name = 16, max_msg = 100,
+			ids = {}, publishes = 1, br_rx = /[\r\n<>]/g, max_name = 16, max_msg = 100,
 			uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 			    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 			    return v.toString(16);
 			}), color = uuid.slice(-3);
-	var message_bubble_tpl = '<div style="display:inline-block;max-width:460px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:10px 0px 10px 0px;padding:6px 40px 6px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div></br>'
+	var message_bubble_tpl = '<div style="display:inline-block;max-width:460px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:10px 0px 10px 0px;padding:6px 40px 6px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div></br>';
 	username.focus();
 	
 	//username input
@@ -40,12 +40,6 @@
 			input.focus();
 			name_change.innerHTML = 'Change Nickname';
 		}
-		
-				//username = prompt('Username:').substr(0, 10);
-				//send_keystroke();
-
-				// Save Username if Possible
-				//db && db.set('username', username);
 	});
 	
 	//message input
@@ -65,9 +59,6 @@
 				}
 			});
 		}
-		// return new_bubble();
-
-		//send_keystroke();
 		return true;
 	});
 	
@@ -76,20 +67,28 @@
 		'callback' : function(message) {
 			if (message['type'] == 'user') {
 				var name = message['content'];
-				if (users.indexOf(name) < 0) {	//new user or change name
-					users.push(name);
-					//shoud delete the old name
-					var old = my_name;
+				//if (users.indexOf(name) < 0) {	//new user or change name
+					//users.push(name);
+				if (!ids[uuid]) {
+					ids[uuid] = true;
 					my_name = name;
-					username.value = '';
-					input.focus();
-					$('#username').parent().slideUp();
-					if (name_change.style.display == 'none') {	//new user? later use uuid...
-						list.innerHTML = 'Welcome: ' + name + '</br>' + list.innerHTML;
-						name_change.style.display = 'block';
-					} else
+					
+					//if (name_change.style.display == 'none') {	//new user? later use uuid...
+					name_change.style.display = 'block';
+					list.innerHTML = 'Welcome: ' + name + '</br>' + list.innerHTML;
+					//} else
+						//list.innerHTML = old + ' changed nickname: ' +name + '</br>' + list.innerHTML;
+				} else {
+					if (name != my_name) {
+						var old = my_name;
+						my_name = name;
 						list.innerHTML = old + ' changed nickname: ' +name + '</br>' + list.innerHTML;
+					}
 				}
+				username.value = '';
+				input.focus();
+				$('#username').parent().slideUp();
+				name_change.innerHTML = 'Change Nickname';
 			} else {	//chat message
 				var bubble = new_bubble(message['user'], message['content'], message['color']);
 				box.innerHTML = bubble.innerHTML + box.innerHTML;
@@ -112,10 +111,21 @@
 		return bubble;
 	}
 	
-//	$('#nickame-change').click(function () {
-//		alert('click');
-//	    if ($('#username').parent().is(":hidden")) {
-//	    	$('#username').parent().show("slow");
-//	});
+	//alert when input error
+/*	function normal(id,times) {
+	        var obj=$("#"+id);
+	        obj.css("background-color","#FFF");
+	        if(times < 0)
+	        	return;
+	        times=times-1;
+	        setTimeout("Ôerror('"+id+"',"+times+")Õ", 250);
+	}
+	function error(id,times) {
+	        var obj=$("#"+id);
+	        obj.css("background-color","#F6CECE");
+	        times = times-1;
+	        console.log("'normal('"+id+"',"+times+")'");
+	        setTimeout("'normal('"+id+"',"+times+")'", 250);
+	}*/
 	
 })();
