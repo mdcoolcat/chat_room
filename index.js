@@ -7,7 +7,7 @@
 			    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 			    return v.toString(16);
 			}), color = uuid.slice(-3);
-	var message_bubble_tpl = '<div style="width:460px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:10px 0px 10px 0px;padding:10px 20px 10px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div>'
+	var message_bubble_tpl = '<div style="display:inline-block;max-width:460px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:10px 0px 10px 0px;padding:6px 40px 6px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div></br>'
 	username.focus();
 	
 	//username input
@@ -24,22 +24,21 @@
 					'content' : new_name.slice(0, max_name).replace(br_rx, ''),
 				}
 			});
-			console.log('pub ok');
 		}
 		//send_keystroke();
 		return true;
 	});
 	
-	//username input
+	//nickname change
 	PUBNUB.bind('mousedown,touchstart', name_change, function() {
 		if (name_change.innerHTML == 'Change Nickname') {
 			$('#username').parent().slideDown();	
 			username.focus();
-			name_change.innerHTML = 'Hide Name Input'
+			name_change.innerHTML = 'Hide Name Input';
 		} else {
 			$('#username').parent().slideUp();	
 			input.focus();
-			name_change.innerHTML = 'Change Nickname'
+			name_change.innerHTML = 'Change Nickname';
 		}
 		
 				//username = prompt('Username:').substr(0, 10);
@@ -77,18 +76,21 @@
 		'callback' : function(message) {
 			if (message['type'] == 'user') {
 				var name = message['content'];
-				if (users.indexOf(name) < 0) {	//new user
+				if (users.indexOf(name) < 0) {	//new user or change name
 					users.push(name);
-					list.innerHTML = 'Welcome: ' + name + '</br>' + list.innerHTML;
+					//shoud delete the old name
+					var old = my_name;
 					my_name = name;
 					username.value = '';
 					input.focus();
 					$('#username').parent().slideUp();
-					name_change.style.display='block';
+					if (name_change.style.display == 'none') {	//new user? later use uuid...
+						list.innerHTML = 'Welcome: ' + name + '</br>' + list.innerHTML;
+						name_change.style.display = 'block';
+					} else
+						list.innerHTML = old + ' changed nickname: ' +name + '</br>' + list.innerHTML;
 				}
 			} else {	//chat message
-				//var bubble = new_bubble(message['content']);
-				//box.innerHTML = '<div>'+message['user'] + ": " + message['content'] + '</div>' + box.innerHTML;
 				var bubble = new_bubble(message['user'], message['content'], message['color']);
 				box.innerHTML = bubble.innerHTML + box.innerHTML;
 				input.value = '';
