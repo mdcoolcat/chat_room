@@ -47,9 +47,11 @@
 			repeat-x;
 	}
 	
-	#input,#username {
+	#input, #username {
+		height: 45px;
 		font-size: 20px;
 		line-height: 20px;
+		border: 1px solid #E6E6E6;
 	}
 	
 	#chat-send {
@@ -78,7 +80,7 @@
 			<input id="username" placeholder="enter your name or anonymous" x-webkit-speech="">
 		</div>
 		<div>
-			<input id="input" placeholder="you-chat-here" x-webkit-speech="">
+			<textarea id="input" placeholder="you-chat-here" x-webkit-speech=""></textarea>
 		</div>
 		<div id="box"></div>
 	<div id="pubnub" pub-key="demo" sub-key="demo" style="position: absolute; top: -1000px;"></div>

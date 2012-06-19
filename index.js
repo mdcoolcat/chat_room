@@ -2,7 +2,8 @@
 	//var users = new Array();
 	var my_name = "Anonymous";
 	var msgbox = PUBNUB.$('box'), input = PUBNUB.$('input'), channel = 'chat', username = PUBNUB.$('username'), list = PUBNUB.$('info-list'), name_change = PUBNUB.$('nickame-change'),
-			ids = {}, publishes = 1, br_rx = /[\r\n<>]/g, max_name = 16, max_msg = 100,
+			ids = {}, publishes = 1, br_rx = /[\r\n<>]/g, space_rx = /^\s+|\s+$/g, 
+			max_name = 16, max_msg = 100,
 			uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 			    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 			    return v.toString(16);
@@ -14,7 +15,8 @@
 	PUBNUB.bind('keydown', username, function(e) {
 		if (e.keyCode == 13) {
 			var new_name = username.value;
-			if (new_name.length == 0) {
+			if (new_name.replace(space_rx, "").length == 0) {
+				username.value = '';
 				return false;
 			}
 			PUBNUB.publish({
@@ -45,8 +47,9 @@
 	//message input
 	PUBNUB.bind('keydown', input, function(e) {
 		if (e.keyCode == 13) {
-			if (input.value.length == 0) {
+			if (input.value.replace(space_rx, "").length == 0) {
 				//highlight input
+				input.value = '';
 				return false;
 			}
 			PUBNUB.publish({
@@ -111,21 +114,20 @@
 		return bubble;
 	}
 	
-	//alert when input error
-/*	function normal(id,times) {
-	        var obj=$("#"+id);
-	        obj.css("background-color","#FFF");
-	        if(times < 0)
-	        	return;
-	        times=times-1;
-	        setTimeout("Ôerror('"+id+"',"+times+")Õ", 250);
-	}
-	function error(id,times) {
-	        var obj=$("#"+id);
-	        obj.css("background-color","#F6CECE");
-	        times = times-1;
-	        console.log("'normal('"+id+"',"+times+")'");
-	        setTimeout("'normal('"+id+"',"+times+")'", 250);
-	}*/
+	//input area resize
+	$('#input').focus(function() {
+		$(this).animate(
+				{height: "90px"}, 700
+		);
+	});
+	$('#input').blur(function() {
+		console.log(this.value.replace(space_rx, "").length);
+		if (this.value.replace(space_rx, "").length == 0) {
+			$(this).animate(
+					{height: "45px"}, 700
+			);
+			this.value = "";
+		}
+	});
 	
 })();
