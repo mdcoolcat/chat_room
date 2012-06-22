@@ -6,7 +6,7 @@
 	.sys, #input, #username {
 		padding: 10px;
 		margin: 10px;
-		width: 400px;
+		width: 460px;
 		text-shadow: #ccc -1px -1px 2px;
 		-webkit-border-radius: 4px;
 		-moz-border-radius: 4px;
@@ -23,14 +23,14 @@
 	#count-div {
 		height: 22px;
 		padding: 0px;
-		margin: 0px;
+		margin-right: 10px;
 		float: right;
-		display: block;
 	}
+	
 	#box {
 		padding: 0px;
 		margin: 10px;
-		width: 400px;
+		width: 450px;
 		height: 300px;
 		overflow: scroll;
 		overflow-x: hidden;
@@ -78,17 +78,21 @@
 		border-top-left-radius: 70px; border-top-right-radius: 70px; border-bottom-right-radius: 70px; border-bottom-left-radius: 70px; cursor: pointer; text-shadow: rgba(0, 0, 0, 0.496094) 0px -1px 2px; background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255, 255, 255, 0.699219)), color-stop(0.2, rgba(255, 255, 255, 0)), color-stop(0.8, rgba(255, 255, 255, 0.199219)), to(rgba(0, 0, 0, 0.296875))); box-shadow: rgb(0, 0, 0) 0px -1px 2px; -webkit-box-shadow: rgb(0, 0, 0) 0px -1px 2px; -webkit-transition: all 0.3s; background-color: rgb(68, 213, 255); color: rgb(255, 255, 255); 
 	}
 	#clear-chat {
-		left: 310px;
-		top: 200px;
+		left: 366px;
+		top: 170px;
 	}
 	#clear-sys {
 		right: 12px;
 		top: 394px;
 	}
 	#hide {
-		right: 12px;
-		top: 4px;
+		right: 322px;
+		top: 2px;
 	}
+/* 	#show {
+		right: 9px;
+		top: 2px;
+	} */
 	
 	#side {
 		 float: right; 
@@ -103,8 +107,8 @@
 	<div class="clear"></div>
 
 <div class="content">
-	<div style="float: left; width:450px">
-	<div id="input-area" style="width:410px; height:232px; z-index: -1">
+	<div style="float: left; width:500px">
+	<div id="input-area" style="width:480px; height:202px; z-index: -1">
 		<div>
 			<a href="#" id="nickame-change" style="margin: 0 10px 0px 13px; text-align: left; display: none">Change Nickname</a>
 		</div>
@@ -113,7 +117,7 @@
 		</div>
 		<div>
 			<textarea id="input" maxlength="140" placeholder="you-chat-here" x-webkit-speech=""></textarea>
-		<div id="count-div"><span id="count" style="font-style:italic;"></span> Characters left</div>
+		<div id="count-div"></div>
 		</div>
 	</div>
 	<button class="clear-button" id="clear-chat">Clear Msg</button>
@@ -122,8 +126,9 @@
 	
 	</div>
 	
-	<button class="clear-button" id="hide">Hide</button>
+	<button class="clear-button" id="show" style="right: 9px;top: 2px; visibility:hidden">Show</button>
 	<div id="side">
+	<button class="clear-button" id="hide">Hide</button>
 	<div>
 		<h3 style="margin:10px; text-align: left">Group Members</h3>
 	</div>

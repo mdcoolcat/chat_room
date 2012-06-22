@@ -1,10 +1,14 @@
 (function() {
 	var channel = 'chat',
+		//boxes
 		msgbox = PUBNUB.$('box'), list = PUBNUB.$('info-list'), members = PUBNUB.$('member-list'), input = PUBNUB.$('input'),  username = PUBNUB.$('username'), 
-		name_change = PUBNUB.$('nickame-change'), counter = PUBNUB.$('count'), counter_div = PUBNUB.$('count-div'),
-		clear_chat = PUBNUB.$('clear-chat'), clear_sys = PUBNUB.$('clear-sys'), hide = PUBNUB.$('hide'),
+		name_change = PUBNUB.$('nickame-change'),  counter_div = PUBNUB.$('count-div'), counter,
+		//buttons
+		clear_chat = PUBNUB.$('clear-chat'), clear_sys = PUBNUB.$('clear-sys'), hide = PUBNUB.$('hide'), show = PUBNUB.$('show'),
+		//backend variables
 		ids = {}, publishes = 1, br_rx = /[\r\n<>]/g, space_rx = /^\s+|\s+$/g, 
 		max_name = 20, max_msg = 140, max_bbl = 10, cur_msgbbl = 0, cur_sysbbl = 0;
+		//user related
 		uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 		    return v.toString(16);
@@ -17,8 +21,7 @@
 	
 	//initialized
 	username.focus();
-	counter.innerHTML = max_msg;
-	counter_div.style.display = 'block';
+	//counter.innerHTML = max_msg;
 	//username input
 	PUBNUB.bind('keydown', username, function(e) {
 		if (e.keyCode == 13) {
@@ -139,16 +142,14 @@
 		cur_sysbbl = 0;
 	});
 	PUBNUB.bind('click', hide, function() {
-		//animate??
-		if (hide.innerHTML == 'Hide') {
-			hide.innerHTML = 'Show';
-			$('#side').hide('slide', { direction: 'right' }, 1000);
-		}
-		else {
-			$('#side').show('slide', { direction: 'right' }, 1000);
-			hide.innerHTML = 'Hide';
-		}
+		$('#side').hide('slide', { direction: 'right' }, 1000);
+		show.style.visibility='visible';
 	});
+	PUBNUB.bind('click', show, function() {
+		$('#side').show('slide', { direction: 'right' }, 1000);
+		show.style.visibility='hidden';
+	});
+	
 	//bubbles
 	function new_bubble(user, content, color) {
 		var bubble = document.createElement('div');
@@ -207,14 +208,12 @@
 	//input area resize
 	$('#input').focus(function() {
 		if (input.style.height != '100px') {
-			console.log('changing display...', counter_div.style.display);
-			if (counter_div.style.display == 'none')
-				counter_div.style.display = 'block';
-			console.log('changed display...', counter_div.style.display);
-			
 			$(this).animate(
 					{height: "100px"}, 100
 			);
+			counter_div.innerHTML = '<span id="count" style="font-style:italic;"></span> Characters left';
+			counter = PUBNUB.$('count');
+			counter.innerHTML = max_msg;
 		}	//else, already resize
 			
 	});
@@ -222,15 +221,11 @@
 		console.log(this.value.replace(space_rx, "").length);
 		if (input.style.height != '45px') {
 			if (this.value.replace(space_rx, "").length == 0) {
-				if (counter_div.style.display == 'block')
-					counter_div.style.display = 'none';
-				
 				$(this).animate(
 						{height: "45px"}, 100
 				);
 				this.value = "";
-				//document.getElementById('count-div').style.display = 'none';
-				//var x = document.getElementById('count-div');
+				counter_div.innerHTML = '';
 			}
 		}
 	});
