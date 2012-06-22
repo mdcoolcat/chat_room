@@ -2,7 +2,7 @@
 	var channel = 'chat',
 		//boxes
 		msgbox = PUBNUB.$('box'), list = PUBNUB.$('info-list'), members = PUBNUB.$('member-list'), input = PUBNUB.$('input'),  username = PUBNUB.$('username'), 
-		name_change = PUBNUB.$('nickame-change'),  counter_div = PUBNUB.$('count-div'), counter,
+		name_change = PUBNUB.$('nickame-change'),  counter_div = PUBNUB.$('count-div'), counter  = PUBNUB.$('count'),
 		//buttons
 		clear_chat = PUBNUB.$('clear-chat'), clear_sys = PUBNUB.$('clear-sys'), hide = PUBNUB.$('hide'), show = PUBNUB.$('show'),
 		//backend variables
@@ -21,7 +21,9 @@
 	
 	//initialized
 	username.focus();
-	//counter.innerHTML = max_msg;
+	counter.innerHTML = max_msg;
+	counter_div.style.visibility = 'hidden';
+	
 	//username input
 	PUBNUB.bind('keydown', username, function(e) {
 		if (e.keyCode == 13) {
@@ -211,9 +213,10 @@
 			$(this).animate(
 					{height: "100px"}, 100
 			);
-			counter_div.innerHTML = '<span id="count" style="font-style:italic;"></span> Characters left';
+			counter_div.style.visibility = 'visible';
+			/*counter_div.innerHTML = '<span id="count" style="font-style:italic;"></span> Characters left';
 			counter = PUBNUB.$('count');
-			counter.innerHTML = max_msg;
+			counter.innerHTML = max_msg;*/
 		}	//else, already resize
 			
 	});
@@ -225,7 +228,8 @@
 						{height: "45px"}, 100
 				);
 				this.value = "";
-				counter_div.innerHTML = '';
+				//counter_div.innerHTML = '';
+			counter_div.style.visibility = 'hidden';
 			}
 		}
 	});

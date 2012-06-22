@@ -25,6 +25,7 @@
 		padding: 0px;
 		margin-right: 10px;
 		float: right;
+		z-index: 10;
 	}
 	
 	#box {
@@ -117,7 +118,7 @@
 		</div>
 		<div>
 			<textarea id="input" maxlength="140" placeholder="you-chat-here" x-webkit-speech=""></textarea>
-		<div id="count-div"></div>
+		<div id="count-div"><span id="count" style="font-style:italic;"></span> Characters left</div>
 		</div>
 	</div>
 	<button class="clear-button" id="clear-chat">Clear Msg</button>
