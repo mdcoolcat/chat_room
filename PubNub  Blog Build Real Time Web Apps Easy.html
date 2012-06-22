@@ -3,10 +3,10 @@
 <head>
 	<link href="tutorial-how-to-build-real-time-keystroke-chat_files/style.css" rel="stylesheet">
 	<style>
-	#info-list, #input,#username {
+	#info-list, #input, #username {
 		padding: 10px;
 		margin: 10px;
-		width: 500px;
+		width: 400px;
 		text-shadow: #ccc -1px -1px 2px;
 		-webkit-border-radius: 4px;
 		-moz-border-radius: 4px;
@@ -20,25 +20,32 @@
 		-o-box-shadow: inset 0 0 30px #eee;
 		box-shadow: inset 0 0 30px #eee;
 	}
-	
+	#count-div {
+		height: 22px;
+		padding: 0px;
+		margin: 0px;
+		float: right;
+		display: block;
+	}
 	#box {
 		padding: 0px;
 		margin: 10px;
-		width: 500px;
+		width: 400px;
 		height: 300px;
 		overflow: scroll;
 		overflow-x: hidden;
 		-webkit-box-orient: horizontal;
 		-moz-box-orient: horizontal;
 		-o-box-orient: horizontal;
-		/* border: 1px solid #888;
-		background: #f8f8f8
+		 border: 1px solid #888;
+		/*background: #f8f8f8
 			url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAZCAYAAADwkER/AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAADdJREFUCNdVzDEOwCAUw9DX/Nv2/kMLRXQD4cFylsAd9KAtvcFz1p5bLfjWwQhGIYUrmMEsiIMfNxwSOsvoNw4AAAAASUVORK5CYII=')
 			repeat-x; */
 	}
 	
 	#info-list {
 		height: 100px;
+		width: 400px;
 		overflow: scroll;
 		overflow-x: hidden;
 		border: 1px solid #888;
@@ -52,15 +59,26 @@
 		font-size: 20px;
 		line-height: 20px;
 		border: 1px solid #E6E6E6;
+		z-index: 1000;
 	}
 	
-	#chat-send {
-		margin: 10px 0px 0px 10px;
-		width: 150px; 
+	.clear-msg {
+		position: absolute;
+		left: 310px;
+		z-index: -1;
+		margin: 10px 0px 10px 10px;
+		width: 90px; 
 		padding: 2px; 
 		font-weight: bold; 
 		font-size: 12px; 
+		float: right;
 		border-top-left-radius: 70px; border-top-right-radius: 70px; border-bottom-right-radius: 70px; border-bottom-left-radius: 70px; cursor: pointer; text-shadow: rgba(0, 0, 0, 0.496094) 0px -1px 2px; background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255, 255, 255, 0.699219)), color-stop(0.2, rgba(255, 255, 255, 0)), color-stop(0.8, rgba(255, 255, 255, 0.199219)), to(rgba(0, 0, 0, 0.296875))); box-shadow: rgb(0, 0, 0) 0px -1px 2px; -webkit-box-shadow: rgb(0, 0, 0) 0px -1px 2px; -webkit-transition: all 0.3s; background-color: rgb(68, 213, 255); color: rgb(255, 255, 255); 
+	}
+	#clear-chat {
+		top: 200px;
+	}
+	#clear-sys {
+		top: 495px;
 	}
 	</style>
 	
@@ -73,18 +91,26 @@
 	</p>
 	
 	<div class="content">
+	<div id="input-area" style="width:410px; height:232px">
 		<div>
-			<a href="#" id="nickame-change" style="margin: 0 10px 10px 13px; text-align: left; display: none">Change Nickname</a>
+			<a href="#" id="nickame-change" style="margin: 0 10px 0px 13px; text-align: left; display: none">Change Nickname</a>
 		</div>
 		<div>
-			<input id="username" placeholder="enter your name or anonymous" x-webkit-speech="">
+			<input id="username" maxlength="20" autocomplete="off" placeholder="enter your name or anonymous" x-webkit-speech="">
 		</div>
 		<div>
-			<textarea id="input" placeholder="you-chat-here" x-webkit-speech=""></textarea>
+			<textarea id="input" maxlength="140" placeholder="you-chat-here" x-webkit-speech=""></textarea>
+		<div id="count-div"><span id="count" style="font-style:italic;"></span> Characters left</div>
 		</div>
+	</div>
+		<button class="clear-msg" id="clear-chat">Clear Msg</button>
 		<div id="box"></div>
-	<div id="pubnub" pub-key="demo" sub-key="demo" style="position: absolute; top: -1000px;"></div>
-		<h3 style="margin:10px; text-align: left">System Notifications</h3>
+		<div id="pubnub" pub-key="demo" sub-key="demo" style="position: absolute; top: -1000px;"></div>
+		<div">
+			<h3 style="margin:10px; text-align: left">System Notifications
+			<button class="clear-msg" id="clear-sys">Clear Msg</button>
+			</h3>
+		</div>
 		<div id="info-list"></div>
 	</div>
 	
