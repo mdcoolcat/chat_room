@@ -3,7 +3,7 @@
 <head>
 	<link href="tutorial-how-to-build-real-time-keystroke-chat_files/style.css" rel="stylesheet">
 	<style>
-	#info-list, #input, #username {
+	.sys, #input, #username {
 		padding: 10px;
 		margin: 10px;
 		width: 400px;
@@ -43,9 +43,8 @@
 			repeat-x; */
 	}
 	
-	#info-list {
-		height: 100px;
-		width: 400px;
+	.sys {
+		width: 380px;
 		overflow: scroll;
 		overflow-x: hidden;
 		border: 1px solid #888;
@@ -53,7 +52,12 @@
 			url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAZCAYAAADwkER/AAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAADdJREFUCNdVzDEOwCAUw9DX/Nv2/kMLRXQD4cFylsAd9KAtvcFz1p5bLfjWwQhGIYUrmMEsiIMfNxwSOsvoNw4AAAAASUVORK5CYII=')
 			repeat-x;
 	}
-	
+	#info-list {
+		height: 100px;
+	}
+	#member-list {
+		height: 300px;
+	}
 	#input, #username {
 		height: 45px;
 		font-size: 20px;
@@ -62,10 +66,9 @@
 		z-index: 1000;
 	}
 	
-	.clear-msg {
+	.clear-button {
 		position: absolute;
-		left: 310px;
-		z-index: -1;
+		z-index: 1;
 		margin: 10px 0px 10px 10px;
 		width: 90px; 
 		padding: 2px; 
@@ -75,10 +78,23 @@
 		border-top-left-radius: 70px; border-top-right-radius: 70px; border-bottom-right-radius: 70px; border-bottom-left-radius: 70px; cursor: pointer; text-shadow: rgba(0, 0, 0, 0.496094) 0px -1px 2px; background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(255, 255, 255, 0.699219)), color-stop(0.2, rgba(255, 255, 255, 0)), color-stop(0.8, rgba(255, 255, 255, 0.199219)), to(rgba(0, 0, 0, 0.296875))); box-shadow: rgb(0, 0, 0) 0px -1px 2px; -webkit-box-shadow: rgb(0, 0, 0) 0px -1px 2px; -webkit-transition: all 0.3s; background-color: rgb(68, 213, 255); color: rgb(255, 255, 255); 
 	}
 	#clear-chat {
+		left: 310px;
 		top: 200px;
 	}
 	#clear-sys {
-		top: 495px;
+		right: 12px;
+		top: 394px;
+	}
+	#hide {
+		right: 12px;
+		top: 4px;
+	}
+	
+	#side {
+		 float: right; 
+		 width:420px;
+		 border:solid";
+		 margin-top: 30px;
 	}
 	</style>
 	
@@ -86,12 +102,9 @@
 <body class="blog/build-real-time-web-apps-easy blog/build-real-time-web-apps-easy" data-twttr-rendered="true" >
 	<div class="clear"></div>
 
-	<p>
-		Chat in <strong>10 lines of JavaScript</strong>. Quickest way to write Real-time Apps on mobile and web.
-	</p>
-	
-	<div class="content">
-	<div id="input-area" style="width:410px; height:232px">
+<div class="content">
+	<div style="float: left; width:450px">
+	<div id="input-area" style="width:410px; height:232px; z-index: -1">
 		<div>
 			<a href="#" id="nickame-change" style="margin: 0 10px 0px 13px; text-align: left; display: none">Change Nickname</a>
 		</div>
@@ -103,20 +116,30 @@
 		<div id="count-div"><span id="count" style="font-style:italic;"></span> Characters left</div>
 		</div>
 	</div>
-		<button class="clear-msg" id="clear-chat">Clear Msg</button>
-		<div id="box"></div>
-		<div id="pubnub" pub-key="demo" sub-key="demo" style="position: absolute; top: -1000px;"></div>
-		<div">
-			<h3 style="margin:10px; text-align: left">System Notifications
-			<button class="clear-msg" id="clear-sys">Clear Msg</button>
-			</h3>
-		</div>
-		<div id="info-list"></div>
+	<button class="clear-button" id="clear-chat">Clear Msg</button>
+	<div id="box"></div>
+	<div id="pubnub" pub-key="demo" sub-key="demo" style="position: absolute; top: -1000px;"></div>
+	
 	</div>
+	
+	<button class="clear-button" id="hide">Hide</button>
+	<div id="side">
+	<div>
+		<h3 style="margin:10px; text-align: left">Group Members</h3>
+	</div>
+	<div class="sys" id="member-list"></div>
+	<div>
+		<h3 style="margin:10px; text-align: left">System Notifications</h3>
+		<button class="clear-button" id="clear-sys">Clear Msg</button>
+	</div>
+	<div class="sys" id="info-list"></div>
+	</div>
+</div>
 	
 	<script src="tutorial-how-to-build-real-time-keystroke-chat_files/pubnub-3.js"></script>
 	<script src="tutorial-how-to-build-real-time-keystroke-chat_files/ga.js" async="" type="text/javascript"></script>
 	<script type="text/javascript" src="tutorial-how-to-build-real-time-keystroke-chat_files/jquery.js"></script>
+	<script type="text/javascript" src="tutorial-how-to-build-real-time-keystroke-chat_files/jquery-ui-1.8.21.custom.min.js"></script>
 	<script src="tutorial-how-to-build-real-time-keystroke-chat_files/30715011.js"></script>
 	<script src="index.js"></script>
 

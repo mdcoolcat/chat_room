@@ -1,22 +1,24 @@
 (function() {
 	var channel = 'chat',
-		msgbox = PUBNUB.$('box'), list = PUBNUB.$('info-list'), input = PUBNUB.$('input'),  username = PUBNUB.$('username'), 
+		msgbox = PUBNUB.$('box'), list = PUBNUB.$('info-list'), members = PUBNUB.$('member-list'), input = PUBNUB.$('input'),  username = PUBNUB.$('username'), 
 		name_change = PUBNUB.$('nickame-change'), counter = PUBNUB.$('count'), counter_div = PUBNUB.$('count-div'),
+		clear_chat = PUBNUB.$('clear-chat'), clear_sys = PUBNUB.$('clear-sys'), hide = PUBNUB.$('hide'),
 		ids = {}, publishes = 1, br_rx = /[\r\n<>]/g, space_rx = /^\s+|\s+$/g, 
-		max_name = 20, max_msg = 140,
+		max_name = 20, max_msg = 140, max_bbl = 10, cur_msgbbl = 0, cur_sysbbl = 0;
 		uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 		    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
 		    return v.toString(16);
 		}), color = uuid.slice(-3), 
 		sys_type = { USER: 0, MENTIONED: 1 },
 		sys_color = ['000000', '0099ff']; 
-	var message_bubble_tpl = '<div style="display:inline-block;max-width:460px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:10px 0px 10px 0px;padding:6px 40px 6px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div></br>';
-	var sysinfo_tpl = '<div style="display:inline-block;max-width:460px;background-color:#{background};color:#fff;font-size:12px;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:5px 0px 5px 0px;padding:3px 20px 3px 10px;border-radius:20px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;">{time}&nbsp;-&nbsp;<strong>{username}</strong>&nbsp;{message}</div></br>';
+	var message_bubble_tpl = '<div style="display:inline-block;max-width:400px;background-color:#{background};color:#fff;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:0px 0px 7px 0px;padding:6px 40px 6px 20px;border-radius:50px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;"><strong>{username}&nbsp;-&nbsp;</strong>&nbsp;{message}</div></br>';
+	var sysinfo_tpl = '<div style="display:inline-block;max-width:400px;background-color:#{background};color:#fff;font-size:12px;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:2px 0px 5px 0px;padding:3px 20px 3px 10px;border-radius:20px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;">{time}&nbsp;-&nbsp;<strong>{username}</strong>&nbsp;{message}</div></br>';
+	var member_bubble_tpl = '<div id="{uuid}" style="max-width:400px;background-color:#{background};color:#fff;font-size:12px;text-shadow: #000 0 1px 1px;font-size: 15px;background-image:-moz-linear-gradient(rgba(255,255,255,0.8)0%,rgba(0,0,0,0)100%);background-image:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,0.8)),to(rgba(0,0,0,0)));border:0;margin:2px 0px 5px 0px;padding:3px 20px 3px 10px;border-radius:20px;-moz-border-radius:50px;-webkit-border-radius:50px;overflow:hidden;-o-transition:all 0.3s;-moz-transition:all 0.3s;-webkit-transition:all 0.3s;transition:all 0.3s;position:relative;">{username}</div></br>';
 	
 	//initialized
 	username.focus();
 	counter.innerHTML = max_msg;
-	//counter_div.style.display = 'none';
+	counter_div.style.display = 'block';
 	//username input
 	PUBNUB.bind('keydown', username, function(e) {
 		if (e.keyCode == 13) {
@@ -30,6 +32,7 @@
 				'message' : {
 					'type' : 'user',
 					'uuid' : uuid,
+					'color' : color,
 					'content' : username.value.slice(0, max_name).replace(br_rx, ''),
 				}
 			});
@@ -86,14 +89,13 @@
 			if (message['type'] == 'user') {
 				var name = message['content'];
 				var the_uuid = message['uuid'];
-				console.log(the_uuid);
-				console.log('id', ids[the_uuid]);
 				if (!ids[the_uuid]) {
 					ids[the_uuid] = name;
 					name_change.style.display = 'block';
 					var sysinfo = new_sysinfo(sys_type.USER, name, 'joins the chat', format_time());
+					var member_bbl = new_member(the_uuid, name, message['color']);
 					list.innerHTML = sysinfo.innerHTML + list.innerHTML;
-					//list.innerHTML = 'Welcome: ' + name + format_time() + '</br>' + list.innerHTML;
+					members.innerHTML += member_bbl.innerHTML;	//maybe sort by name?
 				} else {
 					if (name != ids[the_uuid]) {
 						var old = ids[the_uuid];
@@ -103,20 +105,51 @@
 						//list.innerHTML = old + ' changed nickname: ' +name + format_time() + '</br>' + list.innerHTML;
 					}
 				}
-				console.log('after subscribe', ids[the_uuid]);
 				username.value = '';
 				input.focus();
 				$('#username').parent().slideUp();
 				name_change.innerHTML = 'Change Nickname';
+				if (cur_sysbbl == max_bbl) {
+					//remove the last one
+				} else
+					cur_sysbbl++;
 			} else {	//chat message
 				var bubble = new_bubble(message['user'], message['content'], message['color']);
 				box.innerHTML = bubble.innerHTML + box.innerHTML;
 				input.value = '';
 				input.focus();
+				if (cur_msgbbl == max_bbl) {
+					//remove the last one
+				} else
+					cur_msgbbl++;
+				console.log(cur_msgbbl);
 			}
 		}
 	});
 	
+	//clear message
+	PUBNUB.bind('click', clear_chat, function() {
+		//animate??
+		box.innerHTML = '';
+		cur_msgbbl = 0;
+	});
+	PUBNUB.bind('click', clear_sys, function() {
+		//animate??
+		list.innerHTML = '';
+		cur_sysbbl = 0;
+	});
+	PUBNUB.bind('click', hide, function() {
+		//animate??
+		if (hide.innerHTML == 'Hide') {
+			hide.innerHTML = 'Show';
+			$('#side').hide('slide', { direction: 'right' }, 1000);
+		}
+		else {
+			$('#side').show('slide', { direction: 'right' }, 1000);
+			hide.innerHTML = 'Hide';
+		}
+	});
+	//bubbles
 	function new_bubble(user, content, color) {
 		var bubble = document.createElement('div');
 		// Update The Message Text Body
@@ -143,6 +176,20 @@
 		return bubble;
 	}
 	
+	function new_member(id, user, the_color) {
+		console.log(color+" "+the_color);
+		var bubble = document.createElement('div');
+		// Update The Message Text Body
+		bubble.innerHTML = PUBNUB.supplant(member_bubble_tpl,
+				{
+					'uuid' : id,
+					'username' : user,
+					'background' : the_color
+				});
+		return bubble;
+	}
+	
+	
 	//time format
 	function format_time() {
 		var dt = new Date();
@@ -166,7 +213,7 @@
 			console.log('changed display...', counter_div.style.display);
 			
 			$(this).animate(
-					{height: "100px"}, 80
+					{height: "100px"}, 100
 			);
 		}	//else, already resize
 			
@@ -179,7 +226,7 @@
 					counter_div.style.display = 'none';
 				
 				$(this).animate(
-						{height: "45px"}, 80
+						{height: "45px"}, 100
 				);
 				this.value = "";
 				//document.getElementById('count-div').style.display = 'none';
